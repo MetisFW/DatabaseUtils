@@ -1,0 +1,33 @@
+language: php
+php:
+    - 5.3
+    - 5.4
+    - 5.5
+    - 5.6
+    - 7.0
+    - hhvm
+
+matrix:
+    allow_failures:
+        - php: 7.0
+        - php: hhvm
+
+script:
+    - vendor/bin/tester tests -s -p php -c tests/php.ini-travis
+
+after_failure:
+    # Print *.actual content
+    - for i in `find tests -name \*.actual -o -name \*.expected`; do echo "--- $i"; cat $i; echo; echo; done
+
+before_script:
+    # Install Nette Tester
+    - travis_retry composer update --no-interaction --prefer-dist
+
+    # Create databases.ini
+    - cp ./tests/databases.sample.ini ./tests/databases.ini
+
+    # Create databases
+    - psql -c 'CREATE DATABASE metistest;' -U postgres
+    - mysql -e 'CREATE DATABASE metistest;'
+  
+sudo: false
