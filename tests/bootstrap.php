@@ -14,12 +14,3 @@ date_default_timezone_set('Europe/Prague');
 define('TEMP_DIR', __DIR__.'/tmp/test'.getmypid());
 @mkdir(dirname(TEMP_DIR)); // @ - directory may already exist
 \Tester\Helpers::purge(TEMP_DIR);
-
-function tableExists(PDO $pdo, $tableName) {
-
-}
-
-function test(\Closure $function) {
-  before();
-  $function();
-}
