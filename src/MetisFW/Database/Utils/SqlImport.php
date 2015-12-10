@@ -109,7 +109,7 @@ class SqlImport {
       if(!is_numeric($code)) {
         $code = 0;
       }
-      throw new PDOException("Error in SQL query '$sql' from $source", $code, $e);
+      throw new PDOException("Error in SQL query '$sql' from $source - " . $e->getMessage(), $code, $e);
     }
   }
 
