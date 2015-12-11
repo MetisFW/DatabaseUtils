@@ -12,11 +12,12 @@ require __DIR__ . '/../bootstrap.php';
 
 /** @var PDO $connection */
 $connection = require(__DIR__ . '/../connection.inc.php');
+$driver = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
 
 // prepare empty database
 DatabaseManagement::dropSchema($connection);
 
-SqlImport::loadFromFile($connection, __DIR__."/test.sql");
+SqlImport::loadFromFile($connection, __DIR__."/test.{$driver}.sql");
 $tables = DatabaseManagement::listTables($connection);
 Assert::same(array('test-table'), $tables);
 Assert::equal(array(
@@ -25,11 +26,11 @@ Assert::equal(array(
   array('id' => '102', '102')
 ), $connection->query("SELECT * FROM `test-table` ORDER BY id")->fetchAll());;
 
-SqlImport::loadFromFile($connection, __DIR__ . "/test.sql");
+SqlImport::loadFromFile($connection, __DIR__ . "/test.{$driver}.sql");
 DatabaseManagement::deleteData($connection);
 Assert::same(array('test-table'), $tables);
 Assert::same(array(), $connection->query("SELECT * FROM `test-table` ORDER BY id")->fetchAll());
 
-SqlImport::loadFromFile($connection, __DIR__."/test.sql");
+SqlImport::loadFromFile($connection, __DIR__."/test.{$driver}.sql");
 DatabaseManagement::dropSchema($connection);
 Assert::same(array(), DatabaseManagement::listTables($connection));
