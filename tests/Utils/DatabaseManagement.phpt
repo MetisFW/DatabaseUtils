@@ -14,6 +14,8 @@ require __DIR__ . '/../bootstrap.php';
 $connection = require(__DIR__ . '/../connection.inc.php');
 $driver = $connection->getAttribute(PDO::ATTR_DRIVER_NAME);
 
+$fetchAllSql = file_get_contents(__DIR__."/fetchAll.{$driver}.sql");
+
 // prepare empty database
 DatabaseManagement::dropSchema($connection);
 
@@ -24,12 +26,12 @@ Assert::equal(array(
   array('id' => '100', '100'),
   array('id' => '101', '101'),
   array('id' => '102', '102')
-), $connection->query("SELECT * FROM `test-table` ORDER BY id")->fetchAll());;
+), $connection->query($fetchAllSql)->fetchAll());;
 
 SqlImport::loadFromFile($connection, __DIR__ . "/test.{$driver}.sql");
 DatabaseManagement::deleteData($connection);
 Assert::same(array('test-table'), $tables);
-Assert::same(array(), $connection->query("SELECT * FROM `test-table` ORDER BY id")->fetchAll());
+Assert::same(array(), $connection->query($fetchAllSql)->fetchAll());
 
 SqlImport::loadFromFile($connection, __DIR__."/test.{$driver}.sql");
 DatabaseManagement::dropSchema($connection);
