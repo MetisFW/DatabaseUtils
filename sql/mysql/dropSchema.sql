@@ -3,7 +3,7 @@ SELECT database() into @dbname;
 
 SET FOREIGN_KEY_CHECKS=0;
 
-CREATE TABLE dropSchema_no_tables_fallback (id int)
+CREATE TABLE IF NOT EXISTS dropSchema_no_tables_fallback (id int)
 
 SET @tables = NULL;
 SELECT GROUP_CONCAT('`', table_schema, '`.`', table_name, '`') INTO @tables
