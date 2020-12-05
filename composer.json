@@ -20,8 +20,9 @@
     "issues": "https://github.com/MetisFW/DatabaseUtils/issues"
   },
   "require": {
-    "php": ">=5.3.0",
-    "ext-pdo": "*"
+    "php": ">=7.0.0",
+    "ext-pdo": "*",
+    "phpmyadmin/sql-parser": "4.7.*"
   },
   "require-dev": {
     "nette/tester": "~1.3"
