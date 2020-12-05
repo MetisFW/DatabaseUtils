@@ -75,7 +75,7 @@ class SqlImport {
     while (!feof($stream)) {
       $statement = $bq->extract();
       if (empty($statement)) {
-        $newData = rtrim(fgets($stream));
+        $newData = fgets($stream);
         $bq->query .= preg_replace("/\r($|[^\n])/", "\n$1", $newData);
         continue;
       }
