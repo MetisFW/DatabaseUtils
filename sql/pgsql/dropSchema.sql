@@ -4,7 +4,8 @@ CREATE OR REPLACE FUNCTION create_language_plpgsql()
 RETURNS BOOLEAN AS $$
     CREATE LANGUAGE plpgsql;
     SELECT TRUE;
-$$ LANGUAGE SQL;
+$$ LANGUAGE SQL;;
+DELIMITER ;
 
 SELECT CASE WHEN NOT (
         SELECT  TRUE AS exists
@@ -19,8 +20,7 @@ THEN
     create_language_plpgsql()
 ELSE
     FALSE
-END AS plpgsql_created;;
-DELIMITER ;
+END AS plpgsql_created;
 
 DROP FUNCTION create_language_plpgsql();
 
