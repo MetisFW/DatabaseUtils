@@ -1,9 +1,11 @@
 -- Install plpqsql if not exists
+DELIMITER ;;
 CREATE OR REPLACE FUNCTION create_language_plpgsql()
 RETURNS BOOLEAN AS $$
     CREATE LANGUAGE plpgsql;
     SELECT TRUE;
-$$ LANGUAGE SQL;
+$$ LANGUAGE SQL;;
+DELIMITER ;
 
 SELECT CASE WHEN NOT (
         SELECT  TRUE AS exists
@@ -23,6 +25,7 @@ END AS plpgsql_created;
 DROP FUNCTION create_language_plpgsql();
 
 -- Delete all tables and types
+DELIMITER ;;
 CREATE OR REPLACE FUNCTION purgetestdb() RETURNS void LANGUAGE plpgsql AS
 $$
 DECLARE row record; --
@@ -49,7 +52,8 @@ BEGIN
       EXECUTE 'DROP TYPE ' || quote_ident(row.type) || ' CASCADE'; --
     END LOOP; --
 END; --
-$$;
+$$;;
+DELIMITER ;
 
 SELECT purgetestdb();
 

@@ -11,6 +11,7 @@ namespace Metis\Database\Utils;
 use Metis\Database\Utils\Exceptions\FileNotFoundException;
 use PDO;
 use PDOException;
+use PhpMyAdmin\SqlParser\Utils\BufferedQuery;
 
 class SqlImport {
 
@@ -68,33 +69,27 @@ class SqlImport {
   private static function load(PDO $pdo, $stream, $sourceName) {
     set_time_limit(0);
 
-    $delimiter = ';';
     $count = 0;
-    $lines = 0;
-    $sql = '';
-    while(!feof($stream)) {
-      $line = rtrim(fgets($stream));
-      $lines++;
+    $bq = new BufferedQuery();
 
-      if(!strncasecmp($line, 'DELIMITER ', 10)) {
-        $delimiter = substr($line, 10);
-      } elseif(trim($line) == '' || ($lines == 1 && substr($line, -strlen($delimiter)) === $delimiter)) {
-        // multi-line query ended by empty line or single line query terminated by delimiter
-        $sql .= substr($line, 0, -strlen($delimiter));
-        if(trim($sql) != '') {
-          self::runQuery($pdo, $sql, $sourceName);
-          $count++;
-        }
-        $sql = '';
-        $lines = 0;
-      } else {
-        $sql .= $line."\n";
+    while (!feof($stream)) {
+      $statement = $bq->extract();
+      if (empty($statement)) {
+        $newData = fgets($stream);
+        $bq->query .= preg_replace("/\r($|[^\n])/", "\n$1", $newData);
+        continue;
       }
+      $count++;
+      self::runQuery($pdo, $statement, $sourceName);
     }
 
-    if(trim($sql) !== '') {
-      self::runQuery($pdo, $sql, $sourceName);
+    while (!empty($bq->query)) {
+      $statement = $bq->extract(true);
+      if (empty($statement)) {
+        continue;
+      }
       $count++;
+      self::runQuery($pdo, $statement, $sourceName);
     }
 
     return $count;

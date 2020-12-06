@@ -1,5 +1,6 @@
 DROP PROCEDURE IF EXISTS `deleteDataFinal`; 
 
+DELIMITER ;;
 CREATE PROCEDURE `deleteDataFinal` ()
 BEGIN
         DECLARE table_name VARCHAR(255);
@@ -23,6 +24,7 @@ BEGIN
         CLOSE cur;
         SET FOREIGN_KEY_CHECKS = 1;
     END;;
+DELIMITER ;
 
 CALL `deleteDataFinal`();
 
